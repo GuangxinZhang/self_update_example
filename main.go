@@ -11,7 +11,7 @@ import (
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
-const version = "1.0.0"
+const version = "1.1.0"
 const repository = "GuangxinZhang/self_update_example"
 
 func selfUpdate(repository string) error {
