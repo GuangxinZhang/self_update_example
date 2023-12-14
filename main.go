@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
+	"os/exec"
 
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
-const version = "1.1.0"
+const version = "1.0.0"
 const repository = "GuangxinZhang/self_update_example"
 
 func selfUpdate(repository string) error {
@@ -58,12 +58,28 @@ func main() {
 }
 
 func service() {
-	for {
-		log.Println(version)
-		time.Sleep(time.Second)
-		if err := selfUpdate(repository); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
+	log.Println("版本号：", version)
+	if err := selfUpdate(repository); err != nil {
+		fmt.Fprintln(os.Stderr, err)
 	}
+	log.Println("版本号：", version)
+	restart()
+}
+
+func restart() {
+	exe, err := os.Executable()
+	if err != nil {
+		log.Fatal("Error locating executable path:", err)
+	}
+	cmd := exec.Command(exe, os.Args[1:]...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	err = cmd.Start()
+	if err != nil {
+		log.Fatal("Error occurred while restarting:", err)
+	}
+	fmt.Println("Restarting...")
+	os.Exit(0)
 }
